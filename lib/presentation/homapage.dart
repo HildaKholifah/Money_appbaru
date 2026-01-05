@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moneyappbaru/data/repository/category_repository.dart';
 import 'package:moneyappbaru/data/repository/transaction_repository.dart';
 import 'package:moneyappbaru/data/service/http_service.dart';
-import 'package:moneyappbaru/data/use_case/response/get_all_transaction_response.dart';
+import 'package:moneyappbaru/data/use_case/response/get_transaction_response.dart';
 import 'package:moneyappbaru/data/use_case/response/get_all_category_response.dart';
 
 class Homapage extends StatefulWidget {

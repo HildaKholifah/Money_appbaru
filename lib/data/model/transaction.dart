@@ -1,16 +1,16 @@
 import 'dart:convert';
 
-class Transactions {
+class Transaction {
   final int id;
   final String categoryName;
   final String categoryType;
   final int amount;
   final DateTime transactionDate;
-  final String note;
-  final dynamic image;
+  final String? note;
+  final String? image;
   final DateTime createdAt;
   final DateTime updatedAt;
-  Transactions({
+  Transaction({
     required this.id,
     required this.categoryName,
     required this.categoryType,
@@ -22,18 +22,18 @@ class Transactions {
     required this.updatedAt,
   });
 
-  Transactions copyWith({
+  Transaction copyWith({
     int? id,
     String? categoryName,
     String? categoryType,
     int? amount,
     DateTime? transactionDate,
     String? note,
-    dynamic? image,
+    dynamic image,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
-    return Transactions(
+    return Transaction(
       id: id ?? this.id,
       categoryName: categoryName ?? this.categoryName,
       categoryType: categoryType ?? this.categoryType,
@@ -46,71 +46,72 @@ class Transactions {
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-      'categoryName': categoryName,
-      'categoryType': categoryType,
-      'amount': amount,
-      'transactionDate': transactionDate.millisecondsSinceEpoch,
-      'note': note,
-      'image': image,
-      'createdAt': createdAt.millisecondsSinceEpoch,
-      'updatedAt': updatedAt.millisecondsSinceEpoch,
-    };
-  }
-
-  factory Transactions.fromMap(Map<String, dynamic> map) {
-    return Transactions(
-      id: map['id'] as int,
-      categoryName: map['categoryName'] as String,
-      categoryType: map['categoryType'] as String,
-      amount: map['amount'] as int,
-      transactionDate: DateTime.fromMillisecondsSinceEpoch(
-        map['transactionDate'] as int,
-      ),
-      note: map['note'] as String,
-      image: map['image'] as dynamic,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
-      updatedAt: DateTime.fromMillisecondsSinceEpoch(map['updatedAt'] as int),
-    );
-  }
+  factory Transaction.fromJson(String str) =>
+      Transaction.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory Transactions.fromJson(String source) =>
-      Transactions.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() {
-    return 'Transactions(id: $id, categoryName: $categoryName, categoryType: $categoryType, amount: $amount, transactionDate: $transactionDate, note: $note, image: $image, createdAt: $createdAt, updatedAt: $updatedAt)';
+  factory Transaction.fromMap(Map<String, dynamic> json) {
+    return Transaction(
+      id: json['id'] as int,
+      categoryName: json['category_name'] as String,
+      categoryType: json['category_type'] as String,
+      amount: json['amount'] as int,
+      transactionDate: DateTime.fromMillisecondsSinceEpoch(
+        json['transaction_date'] as int,
+      ),
+      note: json['note'] as String,
+      image: json['image'] as dynamic,
+      createdAt: DateTime.fromMillisecondsSinceEpoch(json['created_at'] as int),
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(json['updated_at'] as int),
+    );
   }
 
-  @override
-  bool operator ==(covariant Transactions other) {
-    if (identical(this, other)) return true;
-
-    return other.id == id &&
-        other.categoryName == categoryName &&
-        other.categoryType == categoryType &&
-        other.amount == amount &&
-        other.transactionDate == transactionDate &&
-        other.note == note &&
-        other.image == image &&
-        other.createdAt == createdAt &&
-        other.updatedAt == updatedAt;
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'category_name': categoryName,
+      'category_type': categoryType,
+      'amount': amount,
+      'transaction_date':
+          "${transactionDate.year.toString().padLeft(4, '0')}-${transactionDate.month.toString().padLeft(2, '0')}-${transactionDate.day.toString().padLeft(2, '0')}",
+      'note': note,
+      'image': image,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+    };
   }
 
-  @override
-  int get hashCode {
-    return id.hashCode ^
-        categoryName.hashCode ^
-        categoryType.hashCode ^
-        amount.hashCode ^
-        transactionDate.hashCode ^
-        note.hashCode ^
-        image.hashCode ^
-        createdAt.hashCode ^
-        updatedAt.hashCode;
-  }
+  // @override
+  // String toString() {
+  //   return 'Transactions(id: $id, categoryName: $categoryName, categoryType: $categoryType, amount: $amount, transactionDate: $transactionDate, note: $note, image: $image, createdAt: $createdAt, updatedAt: $updatedAt)';
+  // }
+
+  // @override
+  // bool operator ==(covariant Transactions other) {
+  //   if (identical(this, other)) return true;
+
+  //   return other.id == id &&
+  //       other.categoryName == categoryName &&
+  //       other.categoryType == categoryType &&
+  //       other.amount == amount &&
+  //       other.transactionDate == transactionDate &&
+  //       other.note == note &&
+  //       other.image == image &&
+  //       other.createdAt == createdAt &&
+  //       other.updatedAt == updatedAt;
+  // }
+
+  // @override
+  // int get hashCode {
+  //   return id.hashCode ^
+  //       categoryName.hashCode ^
+  //       categoryType.hashCode ^
+  //       amount.hashCode ^
+  //       transactionDate.hashCode ^
+  //       note.hashCode ^
+  //       image.hashCode ^
+  //       createdAt.hashCode ^
+  //       updatedAt.hashCode;
+  // }
 }

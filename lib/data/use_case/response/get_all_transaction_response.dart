@@ -1,10 +1,10 @@
-import 'package:meta/meta.dart';
 import 'dart:convert';
+import 'package:moneyappbaru/data/model/transaction.dart';
 
 class GetAllTransactionResponse {
   final String status;
   final String message;
-  final List<Datum> data;
+  List<Transaction> data;
 
   GetAllTransactionResponse({
     required this.status,
@@ -12,106 +12,23 @@ class GetAllTransactionResponse {
     required this.data,
   });
 
-  GetAllTransactionResponse copyWith({
-    String? status,
-    String? message,
-    List<Datum>? data,
-  }) => GetAllTransactionResponse(
-    status: status ?? this.status,
-    message: message ?? this.message,
-    data: data ?? this.data,
-  );
-
   factory GetAllTransactionResponse.fromJson(String str) =>
       GetAllTransactionResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory GetAllTransactionResponse.fromMap(Map<String, dynamic> json) =>
-      GetAllTransactionResponse(
+  factory GetAllTransactionResponse.fromMap(Map<String, dynamic> json) {
+      return GetAllTransactionResponse(
         status: json["status"],
         message: json["message"],
-        data: List<Datum>.from(json["data"].map((x) => Datum.fromMap(x))),
+        data: List<Transaction>.from(
+            json["data"].map((x) => Transaction.fromMap(x))),
       );
+  }
 
   Map<String, dynamic> toMap() => {
     "status": status,
     "message": message,
     "data": List<dynamic>.from(data.map((x) => x.toMap())),
-  };
-}
-
-class Datum {
-  final int id;
-  final String categoryName;
-  final String categoryType;
-  final int amount;
-  final DateTime transactionDate;
-  final String note;
-  final dynamic image;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-
-  Datum({
-    required this.id,
-    required this.categoryName,
-    required this.categoryType,
-    required this.amount,
-    required this.transactionDate,
-    required this.note,
-    required this.image,
-    required this.createdAt,
-    required this.updatedAt,
-  });
-
-  Datum copyWith({
-    int? id,
-    String? categoryName,
-    String? categoryType,
-    int? amount,
-    DateTime? transactionDate,
-    String? note,
-    dynamic image,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) => Datum(
-    id: id ?? this.id,
-    categoryName: categoryName ?? this.categoryName,
-    categoryType: categoryType ?? this.categoryType,
-    amount: amount ?? this.amount,
-    transactionDate: transactionDate ?? this.transactionDate,
-    note: note ?? this.note,
-    image: image ?? this.image,
-    createdAt: createdAt ?? this.createdAt,
-    updatedAt: updatedAt ?? this.updatedAt,
-  );
-
-  factory Datum.fromJson(String str) => Datum.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory Datum.fromMap(Map<String, dynamic> json) => Datum(
-    id: json["id"],
-    categoryName: json["category_name"],
-    categoryType: json["category_type"],
-    amount: json["amount"],
-    transactionDate: DateTime.parse(json["transaction_date"]),
-    note: json["note"],
-    image: json["image"],
-    createdAt: DateTime.parse(json["created_at"]),
-    updatedAt: DateTime.parse(json["updated_at"]),
-  );
-
-  Map<String, dynamic> toMap() => {
-    "id": id,
-    "category_name": categoryName,
-    "category_type": categoryType,
-    "amount": amount,
-    "transaction_date":
-        "${transactionDate.year.toString().padLeft(4, '0')}-${transactionDate.month.toString().padLeft(2, '0')}-${transactionDate.day.toString().padLeft(2, '0')}",
-    "note": note,
-    "image": image,
-    "created_at": createdAt.toIso8601String(),
-    "updated_at": updatedAt.toIso8601String(),
   };
 }
