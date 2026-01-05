@@ -20,7 +20,7 @@ class HttpService {
     return response;
   }
 
-  Future<http.Response> post(String endpoint, Map<String, dynamic> body) async {
+  Future<http.Response> post(String endpoint, Map<String, dynamic> body, [File? image]) async {
     final url = Uri.parse('$baseUrl $endpoint');
     final response = await http.post(
       url,
