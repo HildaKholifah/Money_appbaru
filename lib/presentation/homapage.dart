@@ -6,7 +6,7 @@ import 'package:moneyappbaru/data/repository/transaction_repository.dart';
 import 'package:moneyappbaru/data/service/http_service.dart';
 import 'package:moneyappbaru/presentation/insert_page.dart';
 
-class HomePage extends StatefulWidget{
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget{
 
 class _HomePageState extends State<HomePage> {
   double _balance = 0;
-  double _income = 0;
+  String _income = "0";
   double _expense = 0;
 
   final _transactionRepo = TransactionRepository(HttpService());
@@ -24,33 +24,44 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _loadData();
+    // _loadData();
+    _loadIncome();
   }
 
   Future<void> _loadData() async {
     try {
+      log('message');
       final response = await _transactionRepo.getAllTransaction();
+      log('message');
+
       if (response.status == 'success') {
         setState(() {
           _transactions = response.data;
-          // _calculateTotals(); 
+          // _calculateTotals();
         });
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Gagal memuat data: ${response.message}'),
-            ),
+            SnackBar(content: Text('Gagal memuat data: ${response.message}')),
           );
         }
       }
     } catch (e) {
       log('Error loading transactions: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
+    }
+  }
+
+  Future<void> _loadIncome() async {
+    final response = await _transactionRepo.GetIncome();
+    if (response.status == 'success') {
+      setState(() {
+        _income = response.data.totalIncome;
+      });
     }
   }
 
@@ -110,28 +121,19 @@ class _HomePageState extends State<HomePage> {
           children: [
             Text(
               'Balance: Rp${_balance.toStringAsFixed(0)}',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Income: Rp${_income.toStringAsFixed(0)}',
-                  style: const TextStyle(
-                    color: Colors.green,
-                    fontSize: 16,
-                  ),
+                  'Income: Rp$_income',
+                  style: const TextStyle(color: Colors.green, fontSize: 16),
                 ),
                 Text(
                   'Expense: Rp${_expense.toStringAsFixed(0)}',
-                  style: const TextStyle(
-                    color: Colors.red,
-                    fontSize: 16,
-                  ),
+                  style: const TextStyle(color: Colors.red, fontSize: 16),
                 ),
               ],
             ),
@@ -163,25 +165,19 @@ class _HomePageState extends State<HomePage> {
             '${tx.categoryName} • ${tx.categoryType.toUpperCase()}',
             style: TextStyle(
               fontSize: 14,
-              color:
-                  tx.categoryType == 'income' ? Colors.green : Colors.red,
+              color: tx.categoryType == 'income' ? Colors.green : Colors.red,
             ),
           ),
           Text(
             tx.transactionDate.toString(),
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
           ),
         ],
       ),
       trailing: Text(
         "${tx.categoryType == "income" ? '+' : '-'}Rp${tx.amount.toStringAsFixed(0)}",
         style: TextStyle(
-          color: tx.categoryType == "income"
-              ? Colors.green
-              : Colors.red,
+          color: tx.categoryType == "income" ? Colors.green : Colors.red,
           fontWeight: FontWeight.bold,
           fontSize: 16,
         ),

@@ -6,13 +6,13 @@ class CategoryRepository {
 
   CategoryRepository(this.httpService);
 
-  Future<getAllCategoryResponse> getAllCategory() async {
-    final response = await httpService.get('/categories');
+  Future<GetAllCategoryResponse> getAllCategory() async {
+    final response = await httpService.get('categories');
     if (response.statusCode == 200) {
-      final responseData = getAllCategoryResponse.fromJson(response.body);
+      final responseData = GetAllCategoryResponse.fromJson(response.body);
       return responseData;
     } else {
-      final errorResponse = getAllCategoryResponse.fromJson(response.body);
+      final errorResponse = GetAllCategoryResponse.fromJson(response.body);
       return errorResponse;
     }
   }

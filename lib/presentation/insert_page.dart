@@ -7,7 +7,7 @@ import 'package:moneyappbaru/data/repository/category_repository.dart';
 import 'package:moneyappbaru/data/repository/transaction_repository.dart';
 import 'package:moneyappbaru/data/service/http_service.dart';
 import 'package:moneyappbaru/data/use_case/request/add_transaction_request.dart';
-import 'package:moneyappbaru/data/use_case/response/get_category_response.dart';
+import 'package:moneyappbaru/data/use_case/response/get_all_category_response.dart';
 
 class InsertPage extends StatefulWidget {
   const InsertPage({super.key});
@@ -25,7 +25,7 @@ class _InsertPageState extends State<InsertPage> {
   final categoryRepo = CategoryRepository(HttpService());
   final transactionRepo = TransactionRepository(HttpService());
 
-  getAllCategoryResponse? categoryResponse;
+  GetAllCategoryResponse? categoryResponse;
 
   int? selectedCategoryId;
   File? _selectedImage;
@@ -34,6 +34,7 @@ class _InsertPageState extends State<InsertPage> {
   @override
   void initState() {
     super.initState();
+    log('message');
     _loadCategories();
   }
 
@@ -41,6 +42,7 @@ class _InsertPageState extends State<InsertPage> {
     try {
       final response = await categoryRepo.getAllCategory();
       log('Categories Response: ${response.toJson()}');
+      log('Categories Data: ${response.data}');
 
       if (response.status == 'success') {
         setState(() {
@@ -56,9 +58,11 @@ class _InsertPageState extends State<InsertPage> {
         }
       }
     } catch (e) {
+      log('ERROR loading categories: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     }
   }
@@ -72,12 +76,13 @@ class _InsertPageState extends State<InsertPage> {
 
   Future<void> _pickImage() async {
     try {
-      final pickedFile =
-          await _picker.pickImage(source: ImageSource.gallery);
+      final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
         setState(() {
           _selectedImage = File(pickedFile.path);
         });
+      } else {
+        log('No image selected.');
       }
     } catch (e) {
       log('Error picking image: $e');
@@ -99,8 +104,7 @@ class _InsertPageState extends State<InsertPage> {
   Future<void> _save() async {
     if (_formKey.currentState!.validate()) {
       final amount = double.tryParse(_amountCtrl.text) ?? 0.0;
-      final formattedDate =
-          _selectedDate.toIso8601String().split('T').first;
+      final formattedDate = _selectedDate.toIso8601String().split('T').first;
 
       try {
         final response = await transactionRepo.createTransaction(
@@ -115,20 +119,21 @@ class _InsertPageState extends State<InsertPage> {
 
         if (mounted) {
           if (response.status == 'success') {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(response.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(response.message)));
             Navigator.of(context).pop(true);
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(response.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(response.message)));
           }
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('Error: $e')));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Error: $e')));
         }
       }
     }
@@ -159,27 +164,24 @@ class _InsertPageState extends State<InsertPage> {
                     selectedCategoryId = v;
                   });
                 },
-                decoration:
-                    const InputDecoration(labelText: 'Kategori'),
+                decoration: const InputDecoration(labelText: 'Kategori'),
                 validator: (v) => v == null ? 'Pilih kategori' : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _descCtrl,
-                decoration:
-                    const InputDecoration(labelText: 'Deskripsi'),
-                validator: (v) =>
-                    (v == null || v.trim().isEmpty)
-                        ? 'Masukkan deskripsi'
-                        : null,
+                decoration: const InputDecoration(labelText: 'Deskripsi'),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Masukkan deskripsi'
+                    : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _amountCtrl,
-                decoration:
-                    const InputDecoration(labelText: 'Nominal'),
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(labelText: 'Nominal'),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 validator: (v) {
                   if (v == null || v.trim().isEmpty) {
                     return 'Masukkan nominal';
@@ -233,10 +235,7 @@ class _InsertPageState extends State<InsertPage> {
                 ),
               ],
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _save,
-                child: const Text('Simpan'),
-              ),
+              ElevatedButton(onPressed: _save, child: const Text('Simpan')),
             ],
           ),
         ),

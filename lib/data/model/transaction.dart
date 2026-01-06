@@ -57,13 +57,11 @@ class Transaction {
       categoryName: json['category_name'] as String,
       categoryType: json['category_type'] as String,
       amount: json['amount'] as int,
-      transactionDate: DateTime.fromMillisecondsSinceEpoch(
-        json['transaction_date'] as int,
-      ),
-      note: json['note'] as String,
-      image: json['image'] as dynamic,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(json['created_at'] as int),
-      updatedAt: DateTime.fromMillisecondsSinceEpoch(json['updated_at'] as int),
+      transactionDate: DateTime.parse(json['transaction_date'] as String),
+      note: json['note'] as String?,
+      image: json['image'] as String?,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
     );
   }
 

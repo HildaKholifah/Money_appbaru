@@ -1,6 +1,7 @@
 import 'package:moneyappbaru/data/service/http_service.dart';
 import 'package:moneyappbaru/data/use_case/request/add_transaction_request.dart';
 import 'package:moneyappbaru/data/use_case/response/get_all_transaction_response.dart';
+import 'package:moneyappbaru/data/use_case/response/get_income_response.dart';
 import 'package:moneyappbaru/data/use_case/response/get_transaction_response.dart';
 
 class TransactionRepository {
@@ -46,6 +47,17 @@ class TransactionRepository {
       }
     } catch (e) {
       throw Exception('Error creating transaction: $e');
+    }
+  }
+
+  Future<GetIncomeResponse> GetIncome() async {
+    final response = await httpService.get('transactions/income');
+    if (response.statusCode == 200) {
+      final responseData = GetIncomeResponse.fromJson(response.body);
+      return responseData;
+    } else {
+      final errorResponse = GetIncomeResponse.fromJson(response.body);
+      return errorResponse;
     }
   }
 }
